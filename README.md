@@ -5,4 +5,4 @@ Solutions to the assignments from the McGill University course COMP 321 Programm
 ## Authors:  
 Course instructor: Prof. David Meger  
 Assignment solutions: Marcel Goh  
-Most problems from Kattis
+Most problems are from [Kattis](https://open.kattis.com)
