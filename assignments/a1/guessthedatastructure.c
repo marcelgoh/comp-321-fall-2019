@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 int main() {
+    /* each data structure is represented as an array */
     int *stack = malloc(1000*sizeof(int));
     int *queue = malloc(1000*sizeof(int));
     int *heap = malloc(1001*sizeof(int));
@@ -10,6 +11,7 @@ int main() {
     int num_lines, is_stack, is_queue, is_heap;
     while(scanf("%d", &num_lines) != EOF) {
 
+        /* reset the data structure pointers */
         stack_ptr = queue_hd = queue_tl = 0;
         heap_ptr = 1;
 
@@ -20,6 +22,8 @@ int main() {
             scanf("%d %d", &type, &val);
 
             if (type == 1) {
+                /* we are adding values to our data structures, no point adding
+                 * if it's already out of the question */
                 if (is_stack) {
                     stack[stack_ptr++] = val;
                 }
@@ -44,7 +48,7 @@ int main() {
 
                 }
             } else {
-                /* type == 2 */
+                /* type == 2, we're removing an element and checking against the input */
                 if ((is_stack && stack_ptr == 0) || val != stack[--stack_ptr]) {
                     is_stack = 0;
                 }
@@ -57,10 +61,11 @@ int main() {
                 } else {
                     if (is_heap) {
                         if (val == heap[1]) {
+                            /* the end of the heap is now the root */
                             heap[1] = heap[--heap_ptr];
                             int j = 1;
 
-                            /* sink the root down the heap */
+                            /* sink the root down the heap to restore invariant */
                             while (j*2 < heap_ptr) {
                                 int max;
                                 if (j*2+1 < heap_ptr) {
@@ -85,6 +90,7 @@ int main() {
             }
         }
 
+        /* print correct output based on boolean values */
         int sum = is_stack + is_heap + is_queue;
         if (sum > 1) {
             printf("not sure\n");
