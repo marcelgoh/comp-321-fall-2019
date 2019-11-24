@@ -10,12 +10,13 @@ int main() {
 
     while (num_cases < 20) {
         scanf("%d %d", &num_int, &num_cor);
+        fflush(stdin);
 
         if (num_int == 0 && num_cor == 0) {
             break;
         }
 
-        float a[num_int+1][num_int+1];
+        float a[num_int+2][num_int+2];
         for (int i=0; i<num_int; ++i) {
             for (int j=0; j<num_int; ++j) {
                 a[i][j] = -1;
@@ -26,6 +27,7 @@ int main() {
             int k, l;
             float f;
             scanf("%d %d %4f", &k, &l, &f);
+            fflush(stdin);
             a[k][l] = f;
             a[l][k] = f;
         }
