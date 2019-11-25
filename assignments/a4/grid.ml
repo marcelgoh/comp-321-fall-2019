@@ -1,9 +1,10 @@
 open Printf
 open Str
 
+(* fill the distances matrix *)
 let rec fill_dists grid dist m n queue =
   if Queue.is_empty queue then
-    ()
+    ()  (* base case: exit if queue empty *)
   else
     let (x, y) = Queue.take queue in
     let step_size = grid.(x).(y) in
@@ -11,6 +12,9 @@ let rec fill_dists grid dist m n queue =
       fill_dists grid dist m n queue
     else
       let curr_dist = dist.(x).(y) in
+      (* for each of the four cardinal directions, check if we need to update matrix,
+       * and add a new pair to queue if so
+       *)
       if x - step_size >= 0 &&
          (dist.(x - step_size).(y) > curr_dist + 1 || dist.(x - step_size).(y) = (-1))
       then (
@@ -38,6 +42,7 @@ let rec fill_dists grid dist m n queue =
       fill_dists grid dist m n queue
 
 let main () =
+  (* get input *)
   let nums_str = read_line () in
   let nums = List.map int_of_string (Str.split (Str.regexp " ") nums_str) in
   let m = List.hd nums in

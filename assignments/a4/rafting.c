@@ -15,23 +15,29 @@ struct line {
     int y2;
 };
 
+/* get the distance between two points */
 double point_dist(double x1, double y1, double x2, double y2) {
     return sqrt((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2));
 }
 
+/* get the shortest distance between a point and a line segment */
 double point_line_dist(struct point *p, struct line *l) {
-    int s_x = l->x1 - l->x2;
-    int s_y = l->y1 - l->y2;
+    /* normal vector and vector to project */
+    int n_x = l->x1 - l->x2;
+    int n_y = l->y1 - l->y2;
+    int v_x = p->x - l->x2;
+    int v_y = p->y - l->y2;
 
-    int numer = p->x * s_x + p->y * s_y;
-    int denom = s_x * s_x + s_y * s_y;
+    /* project the vector v onto line */
+    int numer = v_x * n_x + v_y * n_y;
+    int denom = n_x * n_x + n_y * n_y;
     double scale = (numer + 0.0) / denom;
-    double w_x = scale * s_x;
-    double w_y = scale * s_y;
-    w_x = l->x1 - w_x;
-    w_y = l->y1 - w_y;
-    //printf("Point: (%d, %d), Line: (%d, %d)--(%d, %d), s_x: %d, s_y: %d, numer: %d, denom: %d, scale: %.4g, w_x: %.4g, w_y: %.4g\n", p->x, p->y, l->x1, l->y1, l->x2, l->y2, s_x, s_y, numer, denom, scale, w_x, w_y);
+    double w_x = scale * n_x;
+    double w_y = scale * n_y;
+    w_x = l->x2 + w_x;
+    w_y = l->y2 + w_y;
 
+    /* calculate bounds of the line segment */
     int x1_larger = (l->x1 > l->x2);
     int y1_larger = (l->y1 > l->y2);
     int big_x = (x1_larger) ? l->x1 : l->x2;
@@ -41,14 +47,13 @@ double point_line_dist(struct point *p, struct line *l) {
 
     double d = point_dist(p->x, p->y, w_x, w_y);
     if (w_x >= small_x && w_x <= big_x && w_y >= small_y && w_y <= big_y && d > 1e-9) {
+        /* point is on line segment */
         return d;
     } else {
+        /* chose one of the segment endpoints instead */
         double d1 = point_dist(p->x, p->y, l->x1, l->y1);
         double d2 = point_dist(p->x, p->y, l->x2, l->y2);
-        double min = (d1 < d2) ? d1 : d2;
-
-        //printf("%f\n", min);
-        return min;
+        return (d1 < d2) ? d1 : d2;
     }
 }
 
@@ -76,6 +81,7 @@ int main() {
             outer_points[i].y = y;
         }
 
+        /* initialise array of lines */
         for (int i=0; i<num_inner; ++i) {
             int j = (i == 0) ? num_inner - 1 : i - 1;
             inner_lines[i].x1 = inner_points[j].x;
@@ -93,10 +99,12 @@ int main() {
         double min = DBL_MAX;
         for (int i=0; i<num_inner; ++i) {
             for (int j=0; j<num_outer; ++j) {
+                /* compare inner points to outer lines */
                 double d = point_line_dist(inner_points + i, outer_lines + j);
                 if (d < min) {
                     min = d;
                 }
+                /* compare outer points to inner lines */
                 d = point_line_dist(outer_points + j, inner_lines + i);
                 if (d < min) {
                     min = d;
